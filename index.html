@@ -16,7 +16,7 @@
     align-items: center;
     justify-content: center;
     padding: 20px;
-    overflow: hidden;
+    overflow-x: hidden;
   }
   @keyframes gradientShift {
     0% { background-position: 0% 50%; }
@@ -166,21 +166,132 @@
   }
   .back-btn:hover { text-decoration: underline; }
 
-  .summary {
+  /* ===== DANH SÁCH NGƯỜI ĐÃ ĐIỀN ===== */
+  .attendee-list {
+    max-height: 380px;
+    overflow-y: auto;
+    margin-top: 12px;
+    padding-right: 6px;
+  }
+  .attendee-list::-webkit-scrollbar { width: 6px; }
+  .attendee-list::-webkit-scrollbar-track { background: #ffe0e6; border-radius: 3px; }
+  .attendee-list::-webkit-scrollbar-thumb { background: #f5576c; border-radius: 3px; }
+
+  .attendee-card {
     background: linear-gradient(135deg, #fff8f0, #ffe0e6);
-    border-radius: 16px;
-    padding: 22px;
-    margin-top: 18px;
-  }
-  .summary-item {
-    padding: 10px 0;
-    border-bottom: 1px dashed #ffd0dd;
-    font-size: 15px;
+    border: 2px solid #ffd0dd;
+    border-radius: 14px;
+    padding: 14px 18px;
+    margin-bottom: 10px;
     display: flex;
-    gap: 12px;
+    align-items: center;
+    gap: 14px;
+    animation: slideIn 0.3s ease;
   }
-  .summary-item:last-child { border-bottom: none; }
-  .summary-item strong { color: #c0392b; min-width: 110px; }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .attendee-avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f5576c, #c0392b);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 18px;
+    flex-shrink: 0;
+    text-transform: uppercase;
+  }
+  .attendee-info { flex: 1; }
+  .attendee-name {
+    font-weight: 700;
+    color: #c0392b;
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+  .attendee-meta {
+    font-size: 12px;
+    color: #888;
+    line-height: 1.5;
+  }
+  .attendee-meta .tag {
+    display: inline-block;
+    background: #fff;
+    border: 1px solid #ffd0dd;
+    border-radius: 8px;
+    padding: 2px 8px;
+    margin-right: 6px;
+    margin-top: 4px;
+    color: #c0392b;
+    font-weight: 600;
+  }
+  .attendee-you {
+    background: linear-gradient(135deg, #ffe0e6, #ffd0dd);
+    border-color: #f5576c;
+  }
+  .attendee-you .attendee-avatar {
+    background: linear-gradient(135deg, #feca57, #f5576c);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #aaa;
+  }
+  .empty-state .big-emoji {
+    font-size: 56px;
+    margin-bottom: 12px;
+    opacity: 0.5;
+  }
+
+  .stat-box {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .stat-item {
+    flex: 1;
+    background: linear-gradient(135deg, #f5576c, #c0392b);
+    color: #fff;
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+    box-shadow: 0 6px 16px rgba(192,57,43,0.3);
+  }
+  .stat-item .num {
+    font-size: 28px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-item .label {
+    font-size: 12px;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .refresh-btn {
+    background: #fff;
+    border: 2px solid #f5576c;
+    color: #f5576c;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+    width: 100%;
+    margin-top: 12px;
+  }
+  .refresh-btn:hover {
+    background: #f5576c;
+    color: #fff;
+  }
 
   .final-message {
     text-align: center;
@@ -223,14 +334,16 @@
     top: 0; left: 0;
     width: 100vw; height: 100vh;
     background: #000;
-    z-index: 99999;
+    z-index: 2147483647;
     overflow: hidden;
     cursor: none;
     user-select: none;
   }
   #blackScreen.show { display: block; }
+  #blackScreen:fullscreen { display: block; }
+  #blackScreen:-webkit-full-screen { display: block; }
+  #blackScreen:-moz-full-screen { display: block; }
 
-  /* Chữ ERROR chạy */
   .error-text {
     position: absolute;
     color: #ff0033;
@@ -249,7 +362,6 @@
     75% { transform: translate(-1px, -1px); }
   }
 
-   /* Cảnh báo trung tâm */
   .black-warning {
     position: absolute;
     top: 50%;
@@ -286,17 +398,13 @@
       border-color: #ff3366;
     }
   }
-
   .black-warning .name-line {
     color: #ff0033;
     font-size: 22px;
     font-weight: 900;
     letter-spacing: 2px;
     margin-bottom: 16px;
-    text-shadow:
-      0 0 10px #ff0033,
-      0 0 20px #ff0033,
-      0 0 30px #ff0033;
+    text-shadow: 0 0 10px #ff0033, 0 0 20px #ff0033, 0 0 30px #ff0033;
     animation: glitchName 0.3s infinite;
   }
   @keyframes glitchName {
@@ -304,7 +412,6 @@
     33% { transform: translate(-2px, 1px); }
     66% { transform: translate(2px, -1px); }
   }
-
   .black-warning .box {
     color: #fff;
     background: linear-gradient(135deg, #ff0033, #c0392b);
@@ -322,7 +429,6 @@
     0%, 100% { opacity: 1; }
     50% { opacity: 0.85; }
   }
-
   .black-warning .sub {
     color: #ffcc00;
     font-size: 15px;
@@ -331,7 +437,6 @@
     letter-spacing: 0.5px;
     text-shadow: 0 0 8px rgba(255, 204, 0, 0.6);
   }
-
   .black-warning .sub .arrow {
     display: inline-block;
     animation: arrowBounce 0.8s ease-in-out infinite;
@@ -341,61 +446,58 @@
     50% { transform: translate(4px, 4px); }
   }
 
-  /* Nút đồng ý đi ở góc */
   #agreeBtnWrapper {
     position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 10;
+    bottom: 40px;
+    right: 40px;
+    z-index: 2147483647;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 14px;
     animation: pulse 1.6s ease-in-out infinite;
   }
   @keyframes pulse {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.06); }
   }
-
   #agreeBtn {
     background: linear-gradient(135deg, #f5576c, #c0392b);
     color: #fff;
-    border: 2px solid #ff6b8a;
-    padding: 12px 22px;
+    border: 3px solid #ff6b8a;
+    padding: 18px 36px;
     border-radius: 50px;
-    font-size: 15px;
-    font-weight: 800;
+    font-size: 20px;
+    font-weight: 900;
     cursor: pointer;
     font-family: inherit;
-    box-shadow: 0 0 20px rgba(245,87,108,0.8), 0 0 40px rgba(245,87,108,0.4);
-    transition: all 0.2s;
+    box-shadow: 0 0 30px rgba(245,87,108,1), 0 0 60px rgba(245,87,108,0.6);
     animation: glowBtn 1.6s ease-in-out infinite;
+    transition: all 0.2s;
   }
   @keyframes glowBtn {
-    0%, 100% { box-shadow: 0 0 20px rgba(245,87,108,0.8), 0 0 40px rgba(245,87,108,0.4); }
-    50% { box-shadow: 0 0 30px rgba(245,87,108,1), 0 0 60px rgba(245,87,108,0.6); }
+    0%, 100% { box-shadow: 0 0 30px rgba(245,87,108,1), 0 0 60px rgba(245,87,108,0.6); }
+    50% { box-shadow: 0 0 40px rgba(245,87,108,1), 0 0 80px rgba(245,87,108,0.8); }
   }
   #agreeBtn:hover {
     transform: scale(1.08);
     background: linear-gradient(135deg, #ff6b8a, #e74c3c);
   }
-
   #agreeHint {
     color: #fff;
-    background: rgba(192,57,43,0.85);
-    padding: 8px 14px;
+    background: rgba(192,57,43,0.9);
+    padding: 10px 16px;
     border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 700;
     font-family: 'Segoe UI', sans-serif;
     white-space: nowrap;
     position: relative;
     animation: floatHint 1.6s ease-in-out infinite;
-    box-shadow: 0 0 15px rgba(245,87,108,0.5);
+    box-shadow: 0 0 15px rgba(245,87,108,0.6);
   }
   @keyframes floatHint {
     0%, 100% { transform: translateX(0); }
-    50% { transform: translateX(-6px); }
+    50% { transform: translateX(-8px); }
   }
   #agreeHint::after {
     content: '';
@@ -404,7 +506,7 @@
     top: 50%;
     transform: translateY(-50%);
     border: 6px solid transparent;
-    border-left-color: rgba(192,57,43,0.85);
+    border-left-color: rgba(192,57,43,0.9);
   }
 </style>
 </head>
@@ -414,8 +516,6 @@
   <div id="blackScreen">
     <div class="black-warning" id="blackWarning"></div>
     <div id="errorContainer"></div>
-
-    <!-- Nút đồng ý ở góc -->
     <div id="agreeBtnWrapper" style="display:none;">
       <div id="agreeHint">👉 Ấn vào đây để tiếp tục</div>
       <button id="agreeBtn" onclick="agreeFromBlack()">Đồng ý đi 🍻</button>
@@ -425,7 +525,6 @@
   <div class="card">
     <div class="progress">
       <div class="dot active"></div>
-      <div class="dot"></div>
       <div class="dot"></div>
       <div class="dot"></div>
       <div class="dot"></div>
@@ -440,7 +539,7 @@
       <button class="btn btn-yes" id="nameNextBtn" style="width:100%; margin-top:20px;" disabled onclick="nextFromName()">Tiếp tục →</button>
     </div>
 
-    <!-- ===== TRANG 1 ===== -->
+    <!-- ===== TRANG 1: CÓ ĐI KHÔNG ===== -->
     <div class="page" id="page1">
       <button class="back-btn" onclick="goToPage(0)">← Đổi tên</button>
       <h1 id="askTitle">🍻 Tối thứ 7 này đi nhậu không?</h1>
@@ -452,29 +551,29 @@
       <p class="note">* Cân nhắc kỹ trước khi bấm nút bên phải</p>
     </div>
 
-    <!-- ===== TRANG 2 ===== -->
+    <!-- ===== TRANG 2: CHỌN GIỜ ===== -->
     <div class="page" id="page2">
       <button class="back-btn" onclick="goToPage(1)">← Quay lại</button>
       <h1>Mấy giờ bắt đầu? ⏰</h1>
       <p class="subtitle">Chọn giờ cho cả nhóm tập trung</p>
       <div id="timeOptions">
-        <label class="option" onclick="selectOption(this, 'time', '17:00 - Chiều sớm')">
+        <label class="option" onclick="selectOption(this, 'time', '17:00')">
           <span class="icon">🌆</span> 17:00 — Chiều sớm, làm vài chai bia
         </label>
-        <label class="option" onclick="selectOption(this, 'time', '18:00 - Tối sớm')">
+        <label class="option" onclick="selectOption(this, 'time', '18:00')">
           <span class="icon">🌇</span> 18:00 — Tối sớm, chuẩn giờ nhậu
         </label>
-        <label class="option" onclick="selectOption(this, 'time', '19:00 - Tối chính')">
+        <label class="option" onclick="selectOption(this, 'time', '19:00')">
           <span class="icon">🌃</span> 19:00 — Tối chính, nhậu tới khuya
         </label>
-        <label class="option" onclick="selectOption(this, 'time', '20:00 - Khuya')">
+        <label class="option" onclick="selectOption(this, 'time', '20:00')">
           <span class="icon">🌙</span> 20:00 — Khuya, nhậu đêm
         </label>
       </div>
       <button class="btn btn-yes" style="width:100%; margin-top:16px;" onclick="nextFromTime()">Tiếp tục →</button>
     </div>
 
-    <!-- ===== TRANG 3 ===== -->
+    <!-- ===== TRANG 3: CHỌN QUÁN ===== -->
     <div class="page" id="page3">
       <button class="back-btn" onclick="goToPage(2)">← Quay lại</button>
       <h1>Nhậu ở đâu? 🏮</h1>
@@ -499,42 +598,36 @@
           <span class="icon">🎤</span> Karaoke + nhậu — Hát cho quên lối về
         </label>
       </div>
-      <button class="btn btn-yes" style="width:100%; margin-top:16px;" onclick="nextFromPlace()">Tiếp tục →</button>
+      <button class="btn btn-yes" style="width:100%; margin-top:16px;" onclick="nextFromPlace()">Xem tổng hợp →</button>
     </div>
 
-    <!-- ===== TRANG 4 ===== -->
+    <!-- ===== TRANG 4: TỔNG HỢP NGƯỜI ĐÃ ĐIỀN ===== -->
     <div class="page" id="page4">
       <button class="back-btn" onclick="goToPage(3)">← Quay lại</button>
-      <h1>Đi mấy người? 👥</h1>
-      <p class="subtitle">Để đặt bàn cho đủ</p>
-      <div id="countOptions">
-        <label class="option" onclick="selectOption(this, 'count', '2-3 người')">
-          <span class="icon">👫</span> 2-3 người — Nhậu nhỏ
-        </label>
-        <label class="option" onclick="selectOption(this, 'count', '4-6 người')">
-          <span class="icon">👨‍👩‍👦</span> 4-6 người — Nhậu vừa
-        </label>
-        <label class="option" onclick="selectOption(this, 'count', '7-10 người')">
-          <span class="icon">👥</span> 7-10 người — Nhậu đông
-        </label>
-        <label class="option" onclick="selectOption(this, 'count', 'Trên 10 người')">
-          <span class="icon">🎉</span> Trên 10 người — Nhậu tưng bừng
-        </label>
+      <h1>Ai đi rồi nhỉ? 👀</h1>
+      <p class="subtitle" id="summarySubtitle">Danh sách những người đã xác nhận</p>
+
+      <div class="stat-box">
+        <div class="stat-item">
+          <div class="num" id="totalCount">0</div>
+          <div class="label">Đã xác nhận</div>
+        </div>
+        <div class="stat-item" style="background: linear-gradient(135deg, #feca57, #f5576c);">
+          <div class="num" id="youAreIn">🎉</div>
+          <div class="label">Bạn đã vào</div>
+        </div>
       </div>
-      <button class="btn btn-yes" style="width:100%; margin-top:16px;" onclick="nextFromCount()">Xem tổng kết →</button>
+
+      <div class="attendee-list" id="attendeeList"></div>
+
+      <button class="refresh-btn" onclick="renderAttendees()">🔄 Cập nhật danh sách</button>
+
+      <button class="btn btn-yes" style="width:100%; margin-top:16px;" onclick="chotKeo()">Chốt kèo! 🎉</button>
+      <p class="note">* Danh sách lưu trên trình duyệt của bạn</p>
     </div>
 
-    <!-- ===== TRANG 5 ===== -->
+    <!-- ===== TRANG 5: KẾT THÚC ===== -->
     <div class="page" id="page5">
-      <button class="back-btn" onclick="goToPage(4)">← Quay lại</button>
-      <h1>Tổng kết kèo nhậu 🍻</h1>
-      <p class="subtitle" id="summarySubtitle">Xem lại thông tin trước khi chốt</p>
-      <div class="summary" id="summaryBox"></div>
-      <button class="btn btn-yes" style="width:100%; margin-top:20px;" onclick="goToPage(6)">Chốt kèo! 🎉</button>
-    </div>
-
-    <!-- ===== TRANG 6 ===== -->
-    <div class="page" id="page6">
       <div class="final-message">
         <div class="emoji">🍻</div>
         <h2 id="finalTitle">Hẹn gặp tối thứ 7 nhé!</h2>
@@ -548,7 +641,10 @@
   </div>
 
 <script>
-  let state = { name: '', time: null, place: null, count: null };
+  // ===== KEY LƯU TRỮ =====
+  const STORAGE_KEY = 'nhau_thoi_03102026';
+
+  let state = { name: '', time: null, place: null };
   let blackoutActive = false;
   let errorInterval = null;
 
@@ -561,7 +657,7 @@
     const val = nameInput.value.trim();
     if (val.length > 0) {
       nameNextBtn.disabled = false;
-      greeting.textContent = `Chào ${val} 👋`;
+      greeting.textContent = 'Chào ' + val + ' 👋';
     } else {
       nameNextBtn.disabled = true;
       greeting.textContent = '';
@@ -577,7 +673,7 @@
     if (!val) { alert('Nhập tên đã bạn ơi! 😊'); nameInput.focus(); return; }
     state.name = val;
     document.getElementById('askTitle').textContent =
-      `🍻 ${val} ơi, tối thứ 7 này đi nhậu không?`;
+      '🍻 ' + val + ' ơi, tối thứ 7 này đi nhậu không?';
     goToPage(1);
   }
 
@@ -588,145 +684,139 @@
     const blackScreen = document.getElementById('blackScreen');
     const warning = document.getElementById('blackWarning');
 
-    // Cảnh báo trung tâm
     warning.innerHTML = state.name
-      ? `<div class="name-line">${state.name.toUpperCase()} ƠI, MẤT BẠN RỒI!</div>
-         <div class="box">HỆ THỐNG ĐÃ KHÓA TAB NÀY</div>
-         Bạn chỉ còn cách đồng ý đi nhậu thôi... 🍻`
-      : `<div class="box">HỆ THỐNG ĐÃ KHÓA TAB NÀY</div>
-         Bạn chỉ còn cách đồng ý đi nhậu thôi... 🍻`;
+      ? '<div class="name-line">⚠ ' + state.name.toUpperCase() + ' ƠI, MẤT BẠN RỒI! ⚠</div>' +
+        '<div class="box">🔒 HỆ THỐNG ĐÃ KHÓA TAB NÀY 🔒</div>' +
+        '<div class="sub">Đừng lo, vẫn còn cách thoát...<br>Nhìn xuống góc dưới bên phải <span class="arrow">↘</span></div>'
+      : '<div class="box">🔒 HỆ THỐNG ĐÃ KHÓA TAB NÀY 🔒</div>' +
+        '<div class="sub">Đừng lo, vẫn còn cách thoát...<br>Nhìn xuống góc dưới bên phải <span class="arrow">↘</span></div>';
 
-    // Hiện màn hình đen
     blackScreen.classList.add('show');
     blackoutActive = true;
 
-    // Sinh chữ ERROR chạy khắp màn hình
+    requestFullscreen(blackScreen);
     startErrorSpam();
 
-    // Hiện nút đồng ý ở góc (delay 1.5s cho kịch tính)
     const wrapper = document.getElementById('agreeBtnWrapper');
     wrapper.style.display = 'none';
     setTimeout(() => { wrapper.style.display = 'flex'; }, 1500);
 
-    // Khóa
     document.body.style.overflow = 'hidden';
     document.addEventListener('keydown', blockKeys, true);
-    document.addEventListener('contextmenu', e => e.preventDefault(), true);
+    document.addEventListener('contextmenu', preventCtx, true);
     window.addEventListener('beforeunload', warnBeforeUnload);
 
-    document.addEventListener('visibilitychange', () => {
-      if (!document.hidden && blackoutActive) {
-        blackScreen.classList.add('show');
-      }
-    });
+    document.addEventListener('fullscreenchange', refullscreen);
+    document.addEventListener('webkitfullscreenchange', refullscreen);
+    document.addEventListener('mozfullscreenchange', refullscreen);
+    document.addEventListener('MSFullscreenChange', refullscreen);
+
+    document.addEventListener('visibilitychange', handleVisibility);
 
     document.body.style.pointerEvents = 'none';
     blackScreen.style.pointerEvents = 'auto';
-    // Nút đồng ý vẫn phải bấm được
     wrapper.style.pointerEvents = 'auto';
   }
 
-  // ===== TẠO CHỮ ERROR CHẠY =====
+  function preventCtx(e) { e.preventDefault(); }
+
+  function handleVisibility() {
+    if (!document.hidden && blackoutActive) {
+      const blackScreen = document.getElementById('blackScreen');
+      blackScreen.classList.add('show');
+      requestFullscreen(blackScreen);
+    }
+  }
+
+  function requestFullscreen(el) {
+    const req = el.requestFullscreen
+      || el.webkitRequestFullscreen
+      || el.mozRequestFullScreen
+      || el.msRequestFullscreen;
+    if (req) {
+      req.call(el).catch(() => {
+        setTimeout(() => {
+          if (blackoutActive) requestFullscreen(el);
+        }, 1000);
+      });
+    }
+  }
+
+  function refullscreen() {
+    if (!blackoutActive) return;
+    const blackScreen = document.getElementById('blackScreen');
+    const isFull = document.fullscreenElement
+      || document.webkitFullscreenElement
+      || document.mozFullScreenElement
+      || document.msFullscreenElement;
+    if (!isFull && blackoutActive) {
+      setTimeout(() => requestFullscreen(blackScreen), 100);
+    }
+  }
+
   function startErrorSpam() {
     const container = document.getElementById('errorContainer');
     const w = window.innerWidth;
     const h = window.innerHeight;
 
-    // Tạo 40 chữ ERROR ngẫu nhiên vị trí + tốc độ
     for (let i = 0; i < 40; i++) {
-      createErrorElement(container, w, h, i);
+      createErrorElement(container, w, h);
     }
 
-    // Cứ 800ms thêm 5 chữ mới
     errorInterval = setInterval(() => {
       for (let i = 0; i < 5; i++) {
-        createErrorElement(container, w, h, Math.random() * 100);
+        createErrorElement(container, w, h);
       }
-      // Giới hạn tổng số chữ để không lag
       while (container.children.length > 80) {
         container.removeChild(container.firstChild);
       }
     }, 800);
   }
 
-  function createErrorElement(container, w, h, seed) {
+  function createErrorElement(container, w, h) {
     const el = document.createElement('div');
     el.className = 'error-text';
     el.textContent = 'ERROR';
 
-    // Kích thước ngẫu nhiên
     const size = 14 + Math.random() * 50;
     el.style.fontSize = size + 'px';
 
-    // Vị trí ban đầu ngẫu nhiên
-    const startX = Math.random() * w;
-    const startY = Math.random() * h;
-    el.style.left = startX + 'px';
-    el.style.top = startY + 'px';
+    let x = Math.random() * w;
+    let y = Math.random() * h;
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
 
-    // Tốc độ bay ngẫu nhiên
     const speedX = (Math.random() - 0.5) * 4;
     const speedY = (Math.random() - 0.5) * 4;
-
-    // Xoay ngẫu nhiên
     const rotate = (Math.random() - 0.5) * 60;
-    el.style.transform = `rotate(${rotate}deg)`;
+    el.style.transform = 'rotate(' + rotate + 'deg)';
 
     container.appendChild(el);
 
-    // Animate bay
-    let x = startX, y = startY;
     const animate = () => {
       if (!blackoutActive || !el.parentNode) return;
       x += speedX;
       y += speedY;
-      // Bounce khi chạm biên
-      if (x < 0 || x > w - size * 3) el.dataset.vx = -(speedX);
-      if (y < 0 || y > h - size) el.dataset.vy = -(speedY);
+      if (x <= 0 || x >= w - size * 3) { x = Math.max(0, Math.min(w - size * 3, x)); }
+      
+      if (y <= 0 || y >= h - size) { y = Math.max(0, Math.min(h - size, y)); }
       el.style.left = x + 'px';
       el.style.top = y + 'px';
       requestAnimationFrame(animate);
-    };
+    }
     animate();
   }
 
-  // ===== BẤM "ĐỒNG Ý ĐI" → TIẾP TỤC =====
-  function agreeFromBlack() {
-    // Tắt màn hình đen
-    const blackScreen = document.getElementById('blackScreen');
-    blackScreen.classList.remove('show');
-    blackoutActive = false;
-
-    // Dừng spam error
-    if (errorInterval) {
-      clearInterval(errorInterval);
-      errorInterval = null;
-    }
-    document.getElementById('errorContainer').innerHTML = '';
-    document.getElementById('agreeBtnWrapper').style.display = 'none';
-
-    // Mở khóa
-    document.body.style.overflow = '';
-    document.body.style.pointerEvents = '';
-    document.removeEventListener('keydown', blockKeys, true);
-    document.removeEventListener('contextmenu', blockKeys, true);
-    window.removeEventListener('beforeunload', warnBeforeUnload);
-
-    // Chuyển sang bước tiếp theo: Trang 2 (chọn giờ)
-    goToPage(2);
-  }
-
-  // ===== KHÓA PHÍM =====
   function blockKeys(e) {
-    const blocked = ['F5', 'F12', 'Escape'];
-    if (blocked.includes(e.key)) {
+    var blocked = ['F5', 'F12', 'Escape'];
+    if (blocked.indexOf(e.key) !== -1) {
       e.preventDefault();
       e.stopPropagation();
       return false;
     }
     if (e.ctrlKey || e.metaKey) {
-      const keys = ['r', 'R', 'w', 'W', 't', 'T', 'n', 'N'];
-      if (keys.includes(e.key)) {
+      var keys = ['r', 'R', 'w', 'W', 't', 'T', 'n', 'N'];
+      if (keys.indexOf(e.key) !== -1) {
         e.preventDefault();
         e.stopPropagation();
         return false;
@@ -740,28 +830,59 @@
 
   function warnBeforeUnload(e) {
     e.preventDefault();
-    e.returnValue = `${state.name || 'Bạn'} chắc chắn muốn bỏ đi nhậu sao? 🍻`;
+    e.returnValue = (state.name || 'Bạn') + ' chắc chắn muốn bỏ đi nhậu sao? 🍻';
     return e.returnValue;
   }
 
-  // ===== CHỌN OPTION =====
+  function agreeFromBlack() {
+    var bs = document.getElementById('blackScreen');
+    bs.classList.remove('show');
+    blackoutActive = false;
+
+    if (document.exitFullscreen) { try { document.exitFullscreen(); } catch(err){} }
+    if (document.webkitExitFullscreen) { try { document.webkitExitFullscreen(); } catch(err){} }
+    if (document.mozCancelFullScreen) { try { document.mozCancelFullScreen(); } catch(err){} }
+    if (document.msExitFullscreen) { try { document.msExitFullscreen(); } catch(err){} }
+
+    if (errorInterval) { clearInterval(errorInterval); errorInterval = null; }
+    document.getElementById('errorContainer').innerHTML = '';
+    document.getElementById('agreeBtnWrapper').style.display = 'none';
+
+    document.body.style.overflow = '';
+    document.body.style.pointerEvents = '';
+    document.removeEventListener('keydown', blockKeys, true);
+    document.removeEventListener('contextmenu', preventCtx, true);
+    document.removeEventListener('fullscreenchange', refullscreen);
+    document.removeEventListener('webkitfullscreenchange', refullscreen);
+    document.removeEventListener('mozfullscreenchange', refullscreen);
+    document.removeEventListener('MSFullscreenChange', refullscreen);
+    document.removeEventListener('visibilitychange', handleVisibility);
+    window.removeEventListener('beforeunload', warnBeforeUnload);
+
+    goToPage(2);
+  }
+
   function selectOption(el, type, value) {
-    const parent = el.parentElement;
-    parent.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+    var parent = el.parentElement;
+    var opts = parent.querySelectorAll('.option');
+    for (var i = 0; i < opts.length; i++) opts[i].classList.remove('selected');
     el.classList.add('selected');
     state[type] = value;
   }
 
-  // ===== ĐIỀU HƯỚNG =====
   function goToPage(n) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    var pages = document.querySelectorAll('.page');
+    for (var i = 0; i < pages.length; i++) pages[i].classList.remove('active');
     document.getElementById('page' + n).classList.add('active');
 
-    const dots = document.querySelectorAll('.dot');
-    dots.forEach((d, i) => d.classList.toggle('active', i === n));
+    var dots = document.querySelectorAll('.dot');
+    for (var i = 0; i < dots.length; i++) {
+      if (i === n) dots[i].classList.add('active');
+      else dots[i].classList.remove('active');
+    }
 
-    if (n === 5) renderSummary();
-    if (n === 6) renderFinal();
+    if (n === 4) renderAttendees();
+    if (n === 5) renderFinal();
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -770,37 +891,124 @@
     if (!state.time) { alert('Chọn giờ đi bạn ơi! ⏰'); return; }
     goToPage(3);
   }
+
   function nextFromPlace() {
     if (!state.place) { alert('Chọn quán đi bạn ơi! 🏮'); return; }
+    saveAttendance();
     goToPage(4);
   }
-  function nextFromCount() {
-    if (!state.count) { alert('Chọn số người đi bạn ơi! 👥'); return; }
-    goToPage(5);
-  }
 
-  function renderSummary() {
-    document.getElementById('summarySubtitle').textContent =
-      `${state.name} xem lại thông tin trước khi chốt nhé`;
-    document.getElementById('summaryBox').innerHTML = `
-      <div class="summary-item"><strong>🙋 Người rủ:</strong> <span>${state.name}</span></div>
-      <div class="summary-item"><strong>⏰ Giờ:</strong> <span>${state.time}</span></div>
-      <div class="summary-item"><strong>🏮 Quán:</strong> <span>${state.place}</span></div>
-      <div class="summary-item"><strong>👥 Số người:</strong> <span>${state.count}</span></div>
-      <div class="summary-item"><strong>📅 Ngày:</strong> <span>Thứ 7, 03/10/2026</span></div>
-      <div class="summary-item"><strong>💸 Chia tiền:</strong> <span>Campuchia — đứa nào say trả nhiều hơn 😂</span></div>
-    `;
-  }
-
-  function renderFinal() {
-    document.getElementById('finalTime').textContent = state.time || '18:00';
-    if (state.name) {
-      document.getElementById('finalTitle').textContent = `Hẹn gặp ${state.name} tối thứ 7 nhé!`;
-      document.getElementById('finalGreeting').textContent = `${state.name} đúng giờ nha, không được trốn đâu đấy!`;
+  function saveAttendance() {
+    try {
+      var list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      var nameLower = state.name.toLowerCase().trim();
+      var found = false;
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].name.toLowerCase().trim() === nameLower) {
+          list[i].time = state.time;
+          list[i].place = state.place;
+          list[i].updatedAt = Date.now();
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        list.push({
+          name: state.name,
+          time: state.time,
+          place: state.place,
+          createdAt: Date.now()
+        });
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    } catch(err) {
+      console.log('Lỗi lưu:', err);
     }
   }
 
-  window.addEventListener('load', () => nameInput.focus());
+  function renderAttendees() {
+    var listEl = document.getElementById('attendeeList');
+    var countEl = document.getElementById('totalCount');
+    var subtitleEl = document.getElementById('summarySubtitle');
+
+    var list = [];
+    try {
+      list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    } catch(err) { list = []; }
+
+    if (subtitleEl) {
+      subtitleEl.textContent = list.length > 0
+        ? 'Có ' + list.length + ' người đã xác nhận đi nhậu'
+        : 'Chưa có ai xác nhận... bạn là người đầu tiên!';
+    }
+
+    if (countEl) countEl.textContent = list.length;
+
+    if (!listEl) return;
+
+    if (list.length === 0) {
+      listEl.innerHTML =
+        '<div class="empty-state">' +
+          '<div class="big-emoji">🍺</div>' +
+          '<div>Chưa có ai cả</div>' +
+          '<div style="font-size:12px;margin-top:6px;">Hãy là người đầu tiên!</div>' +
+        '</div>';
+      return;
+    }
+
+    list.sort(function(a, b) { return (a.createdAt || 0) - (b.createdAt || 0); });
+
+    var html = '';
+    for (var i = 0; i < list.length; i++) {
+      var p = list[i];
+      var initial = (p.name || '?').charAt(0).toUpperCase();
+      var isYou = state.name && p.name.toLowerCase().trim() === state.name.toLowerCase().trim();
+      var youTag = isYou ? ' <span style="font-size:11px;color:#fff;background:#f5576c;padding:2px 6px;border-radius:8px;margin-left:4px;">BẠN</span>' : '';
+
+      html +=
+        '<div class="attendee-card ' + (isYou ? 'attendee-you' : '') + '">' +
+          '<div class="attendee-avatar">' + initial + '</div>' +
+          '<div class="attendee-info">' +
+            '<div class="attendee-name">' + escapeHtml(p.name) + youTag + '</div>' +
+            '<div class="attendee-meta">' +
+              '<span class="tag">⏰ ' + escapeHtml(p.time || '?') + '</span>' +
+              '<span class="tag">🏮 ' + escapeHtml(p.place || '?') + '</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+    }
+    listEl.innerHTML = html;
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function chotKeo() {
+    goToPage(5);
+  }
+
+  function renderFinal() {
+    var timeEl = document.getElementById('finalTime');
+    var titleEl = document.getElementById('finalTitle');
+    var greetEl = document.getElementById('finalGreeting');
+
+    if (timeEl) timeEl.textContent = state.time || '18:00';
+    if (state.name) {
+      if (titleEl) titleEl.textContent = 'Hẹn gặp ' + state.name + ' tối thứ 7 nhé!';
+      if (greetEl) greetEl.textContent = state.name + ' đúng giờ nha, không được trốn đâu đấy!';
+    }
+  }
+
+  window.addEventListener('load', function() {
+    if (nameInput) nameInput.focus();
+  });
 </script>
 </body>
 </html>
