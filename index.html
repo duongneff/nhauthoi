@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rủ đi nhậu 🍻</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #feca57 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 10s ease infinite;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow: hidden;
+  }
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .card {
+    background: #fff;
+    border-radius: 24px;
+    padding: 36px 32px;
+    max-width: 580px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    position: relative;
+    animation: fadeIn 0.5s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  h1 {
+    font-size: 26px;
+    color: #c0392b;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    text-align: center;
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 26px;
+  }
+  .page { display: none; }
+  .page.active { display: block; animation: fadeIn 0.4s ease; }
+
+  .name-input {
+    width: 100%;
+    padding: 16px 20px;
+    border: 2px solid #ffe4cc;
+    border-radius: 14px;
+    font-size: 17px;
+    font-family: inherit;
+    text-align: center;
+    background: #fff8f0;
+    color: #c0392b;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  .name-input::placeholder { color: #ccc; font-weight: 400; }
+  .name-input:focus {
+    outline: none;
+    border-color: #f5576c;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(245,87,108,0.15);
+  }
+
+  .button-row {
+    display: flex;
+    gap: 14px;
+    margin-top: 30px;
+  }
+  .btn {
+    padding: 16px 24px;
+    border: none;
+    border-radius: 14px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    flex: 1;
+  }
+  .btn-yes {
+    background: linear-gradient(135deg, #f5576c, #c0392b);
+    color: #fff;
+    box-shadow: 0 8px 22px rgba(192,57,43,0.4);
+  }
+  .btn-yes:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 30px rgba(192,57,43,0.55);
+  }
+  .btn-yes:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 4px 12px rgba(192,57,43,0.2);
+  }
+  .btn-no {
+    background: #ecf0f1;
+    color: #7f8c8d;
+  }
+
+  .option {
+    display: flex;
+    align-items: center;
+    background: #fff8f0;
+    border: 2px solid #ffe4cc;
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 15px;
+    font-weight: 500;
+  }
+  .option:hover {
+    border-color: #f5576c;
+    background: #fff0f3;
+    transform: translateX(5px);
+  }
+  .option.selected {
+    border-color: #c0392b;
+    background: linear-gradient(135deg, #ffe0e6, #ffd0dd);
+    box-shadow: 0 4px 14px rgba(192,57,43,0.2);
+  }
+  .option input { display: none; }
+  .option .icon { font-size: 24px; margin-right: 14px; }
+
+  .progress {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #ffd0dd;
+    transition: all 0.3s;
+  }
+  .dot.active {
+    background: #c0392b;
+    width: 26px;
+    border-radius: 4px;
+  }
+
+  .back-btn {
+    background: none;
+    border: none;
+    color: #c0392b;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 6px 0;
+    margin-bottom: 10px;
+    font-family: inherit;
+    font-weight: 600;
+  }
+  .back-btn:hover { text-decoration: underline; }
+
+  .summary {
+    background: linear-gradient(135deg, #fff8f0, #ffe0e6);
+    border-radius: 16px;
+    padding: 22px;
+    margin-top: 18px;
+  }
+  .summary-item {
+    padding: 10px 0;
+    border-bottom: 1px dashed #ffd0dd;
+    font-size: 15px;
+    display: flex;
+    gap: 12px;
+  }
+  .summary-item:last-child { border-bottom: none; }
+  .summary-item strong { color: #c0392b; min-width: 110px; }
+
+  .final-message {
+    text-align: center;
+    padding: 20px 0;
+  }
+  .final-message .emoji {
+    font-size: 70px;
+    margin-bottom: 16px;
+    animation: shake 0.6s ease infinite;
+  }
+  @keyframes shake {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-10deg); }
+    75% { transform: rotate(10deg); }
+  }
+  .final-message h2 { color: #c0392b; margin-bottom: 14px; font-size: 24px; }
+  .final-message p { color: #555; line-height: 1.8; margin-bottom: 6px; font-size: 15px; }
+
+  .note {
+    font-size: 12px;
+    color: #aaa;
+    text-align: center;
+    margin-top: 20px;
+    font-style: italic;
+  }
+
+  .greeting {
+    text-align: center;
+    color: #f5576c;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    min-height: 22px;
+  }
+
+  /* ===== MÀN HÌNH ĐEN ===== */
+  #blackScreen {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: #000;
+    z-index: 99999;
+    overflow: hidden;
+    cursor: none;
+    user-select: none;
+  }
+  #blackScreen.show { display: block; }
+
+  /* Chữ ERROR chạy */
+  .error-text {
+    position: absolute;
+    color: #ff0033;
+    font-family: 'Courier New', monospace;
+    font-weight: 900;
+    text-shadow: 0 0 10px #ff0033, 0 0 20px #ff0033;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0.85;
+    animation: glitch 0.15s infinite;
+  }
+  @keyframes glitch {
+    0%, 100% { transform: translate(0, 0); }
+    25% { transform: translate(-1px, 1px); }
+    50% { transform: translate(1px, -1px); }
+    75% { transform: translate(-1px, -1px); }
+  }
+
+   /* Cảnh báo trung tâm */
+  .black-warning {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    z-index: 5;
+    pointer-events: none;
+    max-width: 90%;
+    padding: 32px 40px;
+    border: 3px solid #ff0033;
+    border-radius: 12px;
+    background: rgba(20, 0, 0, 0.85);
+    box-shadow:
+      0 0 30px rgba(255, 0, 51, 0.6),
+      0 0 60px rgba(255, 0, 51, 0.4),
+      inset 0 0 30px rgba(255, 0, 51, 0.15);
+    animation: warningPulse 1.2s ease-in-out infinite;
+  }
+  @keyframes warningPulse {
+    0%, 100% {
+      box-shadow:
+        0 0 30px rgba(255, 0, 51, 0.6),
+        0 0 60px rgba(255, 0, 51, 0.4),
+        inset 0 0 30px rgba(255, 0, 51, 0.15);
+      border-color: #ff0033;
+    }
+    50% {
+      box-shadow:
+        0 0 50px rgba(255, 0, 51, 1),
+        0 0 100px rgba(255, 0, 51, 0.7),
+        inset 0 0 40px rgba(255, 0, 51, 0.3);
+      border-color: #ff3366;
+    }
+  }
+
+  .black-warning .name-line {
+    color: #ff0033;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    text-shadow:
+      0 0 10px #ff0033,
+      0 0 20px #ff0033,
+      0 0 30px #ff0033;
+    animation: glitchName 0.3s infinite;
+  }
+  @keyframes glitchName {
+    0%, 100% { transform: translate(0, 0); }
+    33% { transform: translate(-2px, 1px); }
+    66% { transform: translate(2px, -1px); }
+  }
+
+  .black-warning .box {
+    color: #fff;
+    background: linear-gradient(135deg, #ff0033, #c0392b);
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    padding: 16px 24px;
+    border-radius: 8px;
+    margin-bottom: 18px;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    box-shadow: 0 0 25px rgba(255, 0, 51, 0.8);
+    animation: boxBlink 1s steps(2) infinite;
+  }
+  @keyframes boxBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
+  }
+
+  .black-warning .sub {
+    color: #ffcc00;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.8;
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 8px rgba(255, 204, 0, 0.6);
+  }
+
+  .black-warning .sub .arrow {
+    display: inline-block;
+    animation: arrowBounce 0.8s ease-in-out infinite;
+  }
+  @keyframes arrowBounce {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(4px, 4px); }
+  }
+
+  /* Nút đồng ý đi ở góc */
+  #agreeBtnWrapper {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+  }
+
+  #agreeBtn {
+    background: linear-gradient(135deg, #f5576c, #c0392b);
+    color: #fff;
+    border: 2px solid #ff6b8a;
+    padding: 12px 22px;
+    border-radius: 50px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 0 20px rgba(245,87,108,0.8), 0 0 40px rgba(245,87,108,0.4);
+    transition: all 0.2s;
+    animation: glowBtn 1.6s ease-in-out infinite;
+  }
+  @keyframes glowBtn {
+    0%, 100% { box-shadow: 0 0 20px rgba(245,87,108,0.8), 0 0 40px rgba(245,87,108,0.4); }
+    50% { box-shadow: 0 0 30px rgba(245,87,108,1), 0 0 60px rgba(245,87,108,0.6); }
+  }
+  #agreeBtn:hover {
+    transform: scale(1.08);
+    background: linear-gradient(135deg, #ff6b8a, #e74c3c);
+  }
+
+  #agreeHint {
+    color: #fff;
+    background: rgba(192,57,43,0.85);
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'Segoe UI', sans-serif;
+    white-space: nowrap;
+    position: relative;
+    animation: floatHint 1.6s ease-in-out infinite;
+    box-shadow: 0 0 15px rgba(245,87,108,0.5);
+  }
+  @keyframes floatHint {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(-6px); }
+  }
+  #agreeHint::after {
+    content: '';
+    position: absolute;
+    right: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 6px solid transparent;
+    border-left-color: rgba(192,57,43,0.85);
+  }
+</style>
+</head>
+<body>
+
+  <!-- ===== MÀN HÌNH ĐEN ===== -->
+  <div id="blackScreen">
+    <div class="black-warning" id="blackWarning"></div>
+    <div id="errorContainer"></div>
+
+    <!-- Nút đồng ý ở góc -->
+    <div id="agreeBtnWrapper" style="display:none;">
+      <div id="agreeHint">👉 Ấn vào đây để tiếp tục</div>
+      <button id="agreeBtn" onclick="agreeFromBlack()">Đồng ý đi 🍻</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="progress">
+      <div class="dot active"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+
+    <!-- ===== TRANG 0: NHẬP TÊN ===== -->
+    <div class="page active" id="page0">
+      <h1>🍻 Trước tiên, bạn tên gì?</h1>
+      <p class="subtitle">Để mình biết đang rủ ai đi nhậu nha</p>
+      <input type="text" id="nameInput" class="name-input" placeholder="Nhập tên của bạn..." maxlength="30" autocomplete="off">
+      <p class="greeting" id="greeting"></p>
+      <button class="btn btn-yes" id="nameNextBtn" style="width:100%; margin-top:20px;" disabled onclick="nextFromName()">Tiếp tục →</button>
+    </div>
+
+    <!-- ===== TRANG 1 ===== -->
+    <div class="page" id="page1">
+      <button class="back-btn" onclick="goToPage(0)">← Đổi tên</button>
+      <h1 id="askTitle">🍻 Tối thứ 7 này đi nhậu không?</h1>
+      <p class="subtitle">Thứ 7, ngày 03/10/2026 — Tụ tập đông đủ nha!</p>
+      <div class="button-row">
+        <button class="btn btn-yes" onclick="goToPage(2)">Đi luôn! 🍺</button>
+        <button class="btn btn-no" id="noBtn">Không đi đâu</button>
+      </div>
+      <p class="note">* Cân nhắc kỹ trước khi bấm nút bên phải</p>
+    </div>
+
+    <!-- ===== TRANG 2 ===== -->
+    <div class="page" id="page2">
+      <button class="back-btn" onclick="goToPage(1)">← Quay lại</button>
+      <h1>Mấy giờ bắt đầu? ⏰</h1>
+      <p class="subtitle">Chọn giờ cho cả nhóm tập trung</p>
+      <div id="timeOptions">
+        <label class="option" onclick="selectOption(this, 'time', '17:00 - Chiều sớm')">
+          <span class="icon">🌆</span> 17:00 — Chiều sớm, làm vài chai bia
+        </label>
+        <label class="option" onclick="selectOption(this, 'time', '18:00 - Tối sớm')">
+          <span class="icon">🌇</span> 18:00 — Tối sớm, chuẩn giờ nhậu
+        </label>
+        <label class="option" onclick="selectOption(this, 'time', '19:00 - Tối chính')">
+          <span class="icon">🌃</span> 19:00 — Tối chính, nhậu tới khuya
+        </label>
+        <label class="option" onclick="selectOption(this, 'time', '20:00 - Khuya')">
+          <span class="icon">🌙</span> 20:00 — Khuya, nhậu đêm
+        </label>
+      </div>
+      <button class="btn btn-yes" style="width:100%; margin-top:16px;" onclick="nextFromTime()">Tiếp tục →</button>
+    </div>
+
+    <!-- ===== TRANG 3 ===== -->
+    <div class="page" id="page3">
+      <button class="back-btn" onclick="goToPage(2)">← Quay lại</button>
+      <h1>Nhậu ở đâu? 🏮</h1>
+      <p class="subtitle">Chọn kiểu quán cả nhóm thích</p>
+      <div id="placeOptions">
+        <label class="option" onclick="selectOption(this, 'place', 'Quán bia hơi')">
+          <span class="icon">🍺</span> Bia hơi Hà Nội — Bình dân, vui
+        </label>
+        <label class="option" onclick="selectOption(this, 'place', 'Quán nướng')">
+          <span class="icon">🍖</span> Quán nướng — Thịt nướng, bia lạnh
+        </label>
+        <label class="option" onclick="selectOption(this, 'place', 'Lẩu')">
+          <span class="icon">🍲</span> Lẩu — Ấm cúng, đông người
+        </label>
+        <label class="option" onclick="selectOption(this, 'place', 'Hải sản')">
+          <span class="icon">🦞</span> Hải sản — Sang chảnh, đắt tí
+        </label>
+        <label class="option" onclick="selectOption(this, 'place', 'Ốc')">
+          <span class="icon">🐌</span> Ốc — Chill, nhiều món
+        </label>
+        <label class="option" onclick="selectOption(this, 'place', 'Karaoke + nhậu')">
+          <span class="icon">🎤</span> Karaoke + nhậu — Hát cho quên lối về
+        </label>
+      </div>
+      <button class="btn btn-yes" style="width:100%; margin-top:16px;" onclick="nextFromPlace()">Tiếp tục →</button>
+    </div>
+
+    <!-- ===== TRANG 4 ===== -->
+    <div class="page" id="page4">
+      <button class="back-btn" onclick="goToPage(3)">← Quay lại</button>
+      <h1>Đi mấy người? 👥</h1>
+      <p class="subtitle">Để đặt bàn cho đủ</p>
+      <div id="countOptions">
+        <label class="option" onclick="selectOption(this, 'count', '2-3 người')">
+          <span class="icon">👫</span> 2-3 người — Nhậu nhỏ
+        </label>
+        <label class="option" onclick="selectOption(this, 'count', '4-6 người')">
+          <span class="icon">👨‍👩‍👦</span> 4-6 người — Nhậu vừa
+        </label>
+        <label class="option" onclick="selectOption(this, 'count', '7-10 người')">
+          <span class="icon">👥</span> 7-10 người — Nhậu đông
+        </label>
+        <label class="option" onclick="selectOption(this, 'count', 'Trên 10 người')">
+          <span class="icon">🎉</span> Trên 10 người — Nhậu tưng bừng
+        </label>
+      </div>
+      <button class="btn btn-yes" style="width:100%; margin-top:16px;" onclick="nextFromCount()">Xem tổng kết →</button>
+    </div>
+
+    <!-- ===== TRANG 5 ===== -->
+    <div class="page" id="page5">
+      <button class="back-btn" onclick="goToPage(4)">← Quay lại</button>
+      <h1>Tổng kết kèo nhậu 🍻</h1>
+      <p class="subtitle" id="summarySubtitle">Xem lại thông tin trước khi chốt</p>
+      <div class="summary" id="summaryBox"></div>
+      <button class="btn btn-yes" style="width:100%; margin-top:20px;" onclick="goToPage(6)">Chốt kèo! 🎉</button>
+    </div>
+
+    <!-- ===== TRANG 6 ===== -->
+    <div class="page" id="page6">
+      <div class="final-message">
+        <div class="emoji">🍻</div>
+        <h2 id="finalTitle">Hẹn gặp tối thứ 7 nhé!</h2>
+        <p id="finalGreeting">Đúng giờ nha, không được trốn đâu đấy!</p>
+        <p><strong id="finalTime"></strong> — ngày 03/10/2026</p>
+        <p style="margin-top:20px; font-size:13px; color:#aaa;">
+          Nhớ mang theo tinh thần vui vẻ và ví tiền 💸
+        </p>
+      </div>
+    </div>
+  </div>
+
+<script>
+  let state = { name: '', time: null, place: null, count: null };
+  let blackoutActive = false;
+  let errorInterval = null;
+
+  // ===== NHẬP TÊN =====
+  const nameInput = document.getElementById('nameInput');
+  const nameNextBtn = document.getElementById('nameNextBtn');
+  const greeting = document.getElementById('greeting');
+
+  nameInput.addEventListener('input', () => {
+    const val = nameInput.value.trim();
+    if (val.length > 0) {
+      nameNextBtn.disabled = false;
+      greeting.textContent = `Chào ${val} 👋`;
+    } else {
+      nameNextBtn.disabled = true;
+      greeting.textContent = '';
+    }
+  });
+
+  nameInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && nameInput.value.trim()) nextFromName();
+  });
+
+  function nextFromName() {
+    const val = nameInput.value.trim();
+    if (!val) { alert('Nhập tên đã bạn ơi! 😊'); nameInput.focus(); return; }
+    state.name = val;
+    document.getElementById('askTitle').textContent =
+      `🍻 ${val} ơi, tối thứ 7 này đi nhậu không?`;
+    goToPage(1);
+  }
+
+  // ===== NÚT "KHÔNG ĐI" =====
+  document.getElementById('noBtn').addEventListener('click', activateBlackout);
+
+  function activateBlackout() {
+    const blackScreen = document.getElementById('blackScreen');
+    const warning = document.getElementById('blackWarning');
+
+    // Cảnh báo trung tâm
+    warning.innerHTML = state.name
+      ? `<div class="name-line">${state.name.toUpperCase()} ƠI, MẤT BẠN RỒI!</div>
+         <div class="box">HỆ THỐNG ĐÃ KHÓA TAB NÀY</div>
+         Bạn chỉ còn cách đồng ý đi nhậu thôi... 🍻`
+      : `<div class="box">HỆ THỐNG ĐÃ KHÓA TAB NÀY</div>
+         Bạn chỉ còn cách đồng ý đi nhậu thôi... 🍻`;
+
+    // Hiện màn hình đen
+    blackScreen.classList.add('show');
+    blackoutActive = true;
+
+    // Sinh chữ ERROR chạy khắp màn hình
+    startErrorSpam();
+
+    // Hiện nút đồng ý ở góc (delay 1.5s cho kịch tính)
+    const wrapper = document.getElementById('agreeBtnWrapper');
+    wrapper.style.display = 'none';
+    setTimeout(() => { wrapper.style.display = 'flex'; }, 1500);
+
+    // Khóa
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', blockKeys, true);
+    document.addEventListener('contextmenu', e => e.preventDefault(), true);
+    window.addEventListener('beforeunload', warnBeforeUnload);
+
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && blackoutActive) {
+        blackScreen.classList.add('show');
+      }
+    });
+
+    document.body.style.pointerEvents = 'none';
+    blackScreen.style.pointerEvents = 'auto';
+    // Nút đồng ý vẫn phải bấm được
+    wrapper.style.pointerEvents = 'auto';
+  }
+
+  // ===== TẠO CHỮ ERROR CHẠY =====
+  function startErrorSpam() {
+    const container = document.getElementById('errorContainer');
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+
+    // Tạo 40 chữ ERROR ngẫu nhiên vị trí + tốc độ
+    for (let i = 0; i < 40; i++) {
+      createErrorElement(container, w, h, i);
+    }
+
+    // Cứ 800ms thêm 5 chữ mới
+    errorInterval = setInterval(() => {
+      for (let i = 0; i < 5; i++) {
+        createErrorElement(container, w, h, Math.random() * 100);
+      }
+      // Giới hạn tổng số chữ để không lag
+      while (container.children.length > 80) {
+        container.removeChild(container.firstChild);
+      }
+    }, 800);
+  }
+
+  function createErrorElement(container, w, h, seed) {
+    const el = document.createElement('div');
+    el.className = 'error-text';
+    el.textContent = 'ERROR';
+
+    // Kích thước ngẫu nhiên
+    const size = 14 + Math.random() * 50;
+    el.style.fontSize = size + 'px';
+
+    // Vị trí ban đầu ngẫu nhiên
+    const startX = Math.random() * w;
+    const startY = Math.random() * h;
+    el.style.left = startX + 'px';
+    el.style.top = startY + 'px';
+
+    // Tốc độ bay ngẫu nhiên
+    const speedX = (Math.random() - 0.5) * 4;
+    const speedY = (Math.random() - 0.5) * 4;
+
+    // Xoay ngẫu nhiên
+    const rotate = (Math.random() - 0.5) * 60;
+    el.style.transform = `rotate(${rotate}deg)`;
+
+    container.appendChild(el);
+
+    // Animate bay
+    let x = startX, y = startY;
+    const animate = () => {
+      if (!blackoutActive || !el.parentNode) return;
+      x += speedX;
+      y += speedY;
+      // Bounce khi chạm biên
+      if (x < 0 || x > w - size * 3) el.dataset.vx = -(speedX);
+      if (y < 0 || y > h - size) el.dataset.vy = -(speedY);
+      el.style.left = x + 'px';
+      el.style.top = y + 'px';
+      requestAnimationFrame(animate);
+    };
+    animate();
+  }
+
+  // ===== BẤM "ĐỒNG Ý ĐI" → TIẾP TỤC =====
+  function agreeFromBlack() {
+    // Tắt màn hình đen
+    const blackScreen = document.getElementById('blackScreen');
+    blackScreen.classList.remove('show');
+    blackoutActive = false;
+
+    // Dừng spam error
+    if (errorInterval) {
+      clearInterval(errorInterval);
+      errorInterval = null;
+    }
+    document.getElementById('errorContainer').innerHTML = '';
+    document.getElementById('agreeBtnWrapper').style.display = 'none';
+
+    // Mở khóa
+    document.body.style.overflow = '';
+    document.body.style.pointerEvents = '';
+    document.removeEventListener('keydown', blockKeys, true);
+    document.removeEventListener('contextmenu', blockKeys, true);
+    window.removeEventListener('beforeunload', warnBeforeUnload);
+
+    // Chuyển sang bước tiếp theo: Trang 2 (chọn giờ)
+    goToPage(2);
+  }
+
+  // ===== KHÓA PHÍM =====
+  function blockKeys(e) {
+    const blocked = ['F5', 'F12', 'Escape'];
+    if (blocked.includes(e.key)) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+    if (e.ctrlKey || e.metaKey) {
+      const keys = ['r', 'R', 'w', 'W', 't', 'T', 'n', 'N'];
+      if (keys.includes(e.key)) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+      if (e.shiftKey && (e.key === 'I' || e.key === 'i')) {
+        e.preventDefault();
+        return false;
+      }
+    }
+  }
+
+  function warnBeforeUnload(e) {
+    e.preventDefault();
+    e.returnValue = `${state.name || 'Bạn'} chắc chắn muốn bỏ đi nhậu sao? 🍻`;
+    return e.returnValue;
+  }
+
+  // ===== CHỌN OPTION =====
+  function selectOption(el, type, value) {
+    const parent = el.parentElement;
+    parent.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    state[type] = value;
+  }
+
+  // ===== ĐIỀU HƯỚNG =====
+  function goToPage(n) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page' + n).classList.add('active');
+
+    const dots = document.querySelectorAll('.dot');
+    dots.forEach((d, i) => d.classList.toggle('active', i === n));
+
+    if (n === 5) renderSummary();
+    if (n === 6) renderFinal();
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function nextFromTime() {
+    if (!state.time) { alert('Chọn giờ đi bạn ơi! ⏰'); return; }
+    goToPage(3);
+  }
+  function nextFromPlace() {
+    if (!state.place) { alert('Chọn quán đi bạn ơi! 🏮'); return; }
+    goToPage(4);
+  }
+  function nextFromCount() {
+    if (!state.count) { alert('Chọn số người đi bạn ơi! 👥'); return; }
+    goToPage(5);
+  }
+
+  function renderSummary() {
+    document.getElementById('summarySubtitle').textContent =
+      `${state.name} xem lại thông tin trước khi chốt nhé`;
+    document.getElementById('summaryBox').innerHTML = `
+      <div class="summary-item"><strong>🙋 Người rủ:</strong> <span>${state.name}</span></div>
+      <div class="summary-item"><strong>⏰ Giờ:</strong> <span>${state.time}</span></div>
+      <div class="summary-item"><strong>🏮 Quán:</strong> <span>${state.place}</span></div>
+      <div class="summary-item"><strong>👥 Số người:</strong> <span>${state.count}</span></div>
+      <div class="summary-item"><strong>📅 Ngày:</strong> <span>Thứ 7, 03/10/2026</span></div>
+      <div class="summary-item"><strong>💸 Chia tiền:</strong> <span>Campuchia — đứa nào say trả nhiều hơn 😂</span></div>
+    `;
+  }
+
+  function renderFinal() {
+    document.getElementById('finalTime').textContent = state.time || '18:00';
+    if (state.name) {
+      document.getElementById('finalTitle').textContent = `Hẹn gặp ${state.name} tối thứ 7 nhé!`;
+      document.getElementById('finalGreeting').textContent = `${state.name} đúng giờ nha, không được trốn đâu đấy!`;
+    }
+  }
+
+  window.addEventListener('load', () => nameInput.focus());
+</script>
+</body>
+</html>
